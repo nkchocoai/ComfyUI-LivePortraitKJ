@@ -1,3 +1,9 @@
+アニメイラストでは顔を検出できず以下のエラーが出ることが多いが、ぼかすことで顔を検出できることがある。  
+`No face detected in the source image!`  
+そのため、顔を検出する用の画像を入力する `crop_target_image` を追加した。  
+![使用例](assets/doc/workflow.png) 
+![出力結果](assets/doc/result.mp4) 
+
 # ComfyUI nodes to use [LivePortrait](https://github.com/KwaiVGI/LivePortrait)
 
 
