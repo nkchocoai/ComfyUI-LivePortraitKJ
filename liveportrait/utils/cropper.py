@@ -59,14 +59,14 @@ class Cropper(object):
             if hasattr(self.crop_cfg, k):
                 setattr(self.crop_cfg, k, v)
 
-    def crop_single_image(self, obj, **kwargs):
+    def crop_single_image(self, crop_target_img, src_img, **kwargs):
         direction = kwargs.get('direction', 'large-small')
 
         # crop and align a single image
-        if isinstance(obj, str):
-            img_rgb = load_image_rgb(obj)
-        elif isinstance(obj, np.ndarray):
-            img_rgb = obj
+        if isinstance(crop_target_img, str):
+            img_rgb = load_image_rgb(crop_target_img)
+        elif isinstance(crop_target_img, np.ndarray):
+            img_rgb = crop_target_img
 
         src_face = self.face_analysis_wrapper.get(
             img_rgb,
@@ -85,11 +85,11 @@ class Cropper(object):
 
         # crop the face
         ret_dct = crop_image(
-            img_rgb,  # ndarray
+            src_img,  # ndarray
             pts,  # 106x2 or Nx2
-            dsize=kwargs.get('dsize', 512),
-            scale=kwargs.get('scale', 2.3),
-            vy_ratio=kwargs.get('vy_ratio', -0.15),
+            dsize=kwargs.get("dsize", 512),
+            scale=kwargs.get("scale", 2.3),
+            vy_ratio=kwargs.get("vy_ratio", -0.15),
         )
         # update a 256x256 version for network input or else
         ret_dct['img_crop_256x256'] = cv2.resize(ret_dct['img_crop'], (256, 256), interpolation=cv2.INTER_AREA)
@@ -105,7 +105,7 @@ class Cropper(object):
         # TODO: implement a tracking-based version
         driving_lmk_lst = []
         for driving_image in driving_rgb_lst:
-            ret_dct = self.crop_single_image(driving_image)
+            ret_dct = self.crop_single_image(driving_image, driving_image)
             driving_lmk_lst.append(ret_dct['lmk_crop'])
         return driving_lmk_lst
 

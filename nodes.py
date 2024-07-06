@@ -212,6 +212,7 @@ class LivePortraitProcess:
 
             "pipeline": ("LIVEPORTRAITPIPE",),
             "source_image": ("IMAGE",),
+            "crop_target_image": ("IMAGE",),
             "driving_images": ("IMAGE",),
             "dsize": ("INT", {"default": 512, "min": 64, "max": 2048}),
             "scale": ("FLOAT", {"default": 2.3, "min": 1.0, "max": 4.0, "step": 0.01}),
@@ -232,9 +233,26 @@ class LivePortraitProcess:
     FUNCTION = "process"
     CATEGORY = "LivePortrait"
 
-    def process(self, source_image, driving_images, dsize, scale, vx_ratio, vy_ratio, pipeline, 
-                lip_zero, eye_retargeting, lip_retargeting, stitching, relative, eyes_retargeting_multiplier, lip_retargeting_multiplier):
+    def process(
+        self,
+        source_image,
+        crop_target_image, 
+        driving_images,
+        dsize,
+        scale,
+        vx_ratio,
+        vy_ratio,
+        pipeline,
+        lip_zero,
+        eye_retargeting,
+        lip_retargeting,
+        stitching,
+        relative,
+        eyes_retargeting_multiplier,
+        lip_retargeting_multiplier,
+    ):
         source_image_np = (source_image * 255).byte().numpy()
+        crop_target_image_np = (crop_target_image * 255).byte().numpy()
         driving_images_np = (driving_images * 255).byte().numpy()
 
         crop_cfg = CropConfig(
@@ -256,8 +274,10 @@ class LivePortraitProcess:
       
         cropped_out_list = []
         full_out_list = []
-        for img in source_image_np:
-            cropped_frames, full_frame = pipeline.execute(img, driving_images_np)
+        for img, crop_target_img in zip(source_image_np, crop_target_image_np):
+            cropped_frames, full_frame = pipeline.execute(
+                img, crop_target_img, driving_images_np
+            )
             cropped_tensors = [torch.from_numpy(np_array) for np_array in cropped_frames]
             cropped_tensors_out = torch.stack(cropped_tensors) / 255
             cropped_tensors_out = cropped_tensors_out.cpu().float()

@@ -37,13 +37,13 @@ class LivePortraitPipeline(object):
                 appearance_feature_extractor, motion_extractor, warping_module,
                 spade_generator, stitching_retargeting_module, cfg=inference_cfg)
 
-    def execute(self, img_rgb, driving_images_np):
+    def execute(self, img_rgb, crop_target_img, driving_images_np):
         inference_cfg = self.live_portrait_wrapper.cfg # for convenience
         ######## process reference portrait ########
         #img_rgb = load_image_rgb(args.source_image)
         img_rgb = resize_to_limit(img_rgb, inference_cfg.ref_max_shape, inference_cfg.ref_shape_n)
         #log(f"Load source image from {args.source_image}")
-        crop_info = self.cropper.crop_single_image(img_rgb)
+        crop_info = self.cropper.crop_single_image(crop_target_img, img_rgb)
         source_lmk = crop_info['lmk_crop']
         img_crop, img_crop_256x256 = crop_info['img_crop'], crop_info['img_crop_256x256']
         if inference_cfg.flag_do_crop:
