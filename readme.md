@@ -2,7 +2,9 @@
 `No face detected in the source image!`  
 そのため、顔を検出する用の画像を入力する `crop_target_image` を追加した。  
 ![使用例](assets/doc/workflow.png) 
-![出力結果](assets/doc/result.mp4) 
+https://github.com/nkchocoai/ComfyUI-LivePortraitKJ/assets/156806390/4fe3c26d-fd17-48c9-80a8-52e08fc5c4d1
+
+
 
 # ComfyUI nodes to use [LivePortrait](https://github.com/KwaiVGI/LivePortrait)
 
